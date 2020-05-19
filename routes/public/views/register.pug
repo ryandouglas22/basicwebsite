@@ -1,0 +1,15 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(name='viewport' width='device-width,' initial-scale='1.0,' maximum-scale='1.0,' user-scalable='0')
+  title Ryan Douglas
+div(align='center')
+  h2 Register
+  form.login(action='/api/auth/register' method='POST')
+    input#name(type='text' name='name' placeholder='name' required='true' autofocus='')
+    br
+    input#email(type='text' name='email' placeholder='email' required='true')
+    br
+    input#password(type='text' name='password' placeholder='password' required='true')
+    br
+    button.btn(type='submit') register
