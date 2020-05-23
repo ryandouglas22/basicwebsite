@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcrypt");
 const jsonwt = require("jsonwebtoken");
 const passport = require("passport");
 const key = require("../../setup/secret");
@@ -29,29 +28,24 @@ router.post('/register', (req, res) => {
                          password: req.body.password
                     });
                     //Encrypt password
-                    bcrypt.genSalt(10, (err, salt) => {
-                         bcrypt.hash(newUser.password, salt, (err, hash) => {
-                              if (err) throw err;
-                              newUser.password = hash;
-                              //saves user to database
-                              newUser.save()
-                                   .then(user => {
-                                        //creates new profile for user
-                                        const newProfile = new Profile ({
-                                             user: user.id,
-                                             name: req.body.name,
-                                             email: req.body.email
-                                        });
-                                        //saves profile to database
-                                        newProfile.save()
-                                             //sends profile to client
-                                             .then(profile => res.redirect('/api/auth/login'))
-                                             .catch(err => console.log(err));
-                                   })
-                                   .catch(err = console.log(err));
-                         });
-                    });
-               }
+                    
+                    newUser.save()
+                         .then(user => {
+                              //creates new profile for user
+                              const newProfile = new Profile ({
+                                   user: user.id,
+                                   name: req.body.name,
+                                   email: req.body.email
+                              });
+                              //saves profile to database
+                              newProfile.save()
+                                   //sends profile to client
+                                   .then(profile => res.redirect('/api/auth/login'))
+                                   .catch(err => console.log(err));
+                         })
+                         .catch(err = console.log(err));
+                    }
+                         
           })
           .catch(err => console.log(err));
 });
@@ -81,34 +75,8 @@ router.post('/login', (req, res) => {
                     return res.status(400).json({emailerror: 'User not found'})
                }
                //compares password with hash
-               bcrypt.compare(password, user.password)
-                    .then(match => {
-                         //checks if password matches hash
-                         if (match) {
-                              //create token for user
-                              const payload = {
-                                   id: user.id,
-                                   name: user.name,
-                                   email: user.email
-                              };
-                              jsonwt.sign(
-                                   payload,
-                                   key.secret,
-                                   {expiresIn: 3600},
-                                   (err, token) => {
-                                        if (err) throw err;
-                                        //send token to user
-                                        // res.json({
-                                        //      token: "Bearer " + token
-                                        // });
-                                        res.redirect('/')
-                                   }
-                              );
-                         } else {
-                              res.status(400).json({passworderror: "Incorrect password"})
-                         };
-                    })
-                    .catch(err => console.log(err));
+               
+               res.redirect('/')
           })
           .catch(err => console.log(err));
 });
